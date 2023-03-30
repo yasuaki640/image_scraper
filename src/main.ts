@@ -1,34 +1,29 @@
-/**
- * Some predefined delay values (in milliseconds).
- */
-export enum Delays {
-  Short = 500,
-  Medium = 2000,
-  Long = 5000,
-}
+import { chromium } from "playwright";
 
-/**
- * Returns a Promise<string> that resolves after a given time.
- *
- * @param {string} name - A name.
- * @param {number=} [delay=Delays.Medium] - A number of milliseconds to delay resolution of the Promise.
- * @returns {Promise<string>}
- */
-function delayedHello(
-  name: string,
-  delay: number = Delays.Medium,
-): Promise<string> {
-  return new Promise((resolve: (value?: string) => void) =>
-    setTimeout(() => resolve(`Hello, ${name}`), delay),
-  );
-}
+const isIncludes = (arr: any[], target: string) => arr.some(el => target.includes(el));
 
-// Please see the comment in the .eslintrc.json file about the suppressed rule!
-// Below is an example of how to use ESLint errors suppression. You can read more
-// at https://eslint.org/docs/latest/user-guide/configuring/rules#disabling-rules
+async function main() {
+  const browser = await chromium.launch({ headless: false });
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export async function greeter(name: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
-  // The name parameter should be of type string. Any is used only to trigger the rule.
-  return await delayedHello(name, Delays.Long);
-}
+  const page = await browser.newPage();
+  await page.goto("https://www.instagram.com/explore/tags/"); // TODO 引数かなんかでなんとかする
+
+  const urls: string[] = [];
+  page.on("request", (r) => {
+    const url = r.url();
+    if (isIncludes([".jpg", ".webp"], url)) {
+      urls.push(url);
+    }
+  });
+
+  for (let i = 0; i < 4; i++) {
+    await page.waitForTimeout(4 * 1000);
+    await page.mouse.wheel(0, 10000);
+  }
+
+  await browser.close();
+
+  console.log(urls);
+};
+
+main();
