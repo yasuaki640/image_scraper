@@ -7,7 +7,8 @@ async function main() {
   const browser = await chromium.launch({ headless: false });
 
   const page = await browser.newPage();
-  await page.goto('https://www.instagram.com/explore/tags/猫');
+  const keyword = process.argv.pop();
+  await page.goto('https://www.instagram.com/explore/tags/' + keyword);
 
   const urls: string[] = [];
   let lastRequestSend = Date.now();
