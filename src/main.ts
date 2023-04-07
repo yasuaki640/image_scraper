@@ -1,4 +1,5 @@
 import { chromium } from 'playwright';
+import * as fs from 'fs';
 
 const isIncludes = (arr: string[], target: string) =>
   arr.some((el) => target.includes(el));
@@ -21,12 +22,15 @@ async function main() {
   });
 
   do {
-    await page.mouse.wheel(0, 10000);
-    await page.waitForTimeout(3000);
-  } while (Date.now() - lastRequestSend <= 3000);
+    await page.mouse.wheel(0, 1e99);
+  } while (Date.now() - lastRequestSend <= 2000);
+  console.log(urls.length + ' image urls fetched.');
 
   await browser.close();
-  console.log(urls);
+
+  const json = JSON.stringify({ data: urls });
+
+  fs.writeFileSync(keyword + '.json', json);
 }
 
 main();
