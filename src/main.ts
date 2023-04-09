@@ -4,6 +4,8 @@ import * as fs from 'fs';
 const isIncludes = (arr: string[], target: string) =>
   arr.some((el) => target.includes(el));
 
+const OUT_DIR = 'images';
+
 async function main() {
   const browser = await chromium.launch({ headless: false });
 
@@ -28,9 +30,11 @@ async function main() {
 
   await browser.close();
 
-  const json = JSON.stringify({ data: urls });
+  fs.mkdirSync(OUT_DIR, { recursive: true });
 
-  fs.writeFileSync(keyword + '.json', json);
+  const json = JSON.stringify({ data: urls });
+  const fileName = `${keyword}${Date.now()}.json`;
+  fs.writeFileSync(`${OUT_DIR}/${fileName}`, json);
 }
 
 main();
