@@ -33,7 +33,7 @@ async function main() {
   fs.mkdirSync(OUT_DIR, { recursive: true });
 
   const json = JSON.stringify({ data: urls });
-  const fileName = `${keyword}${Date.now()}.json`;
+  const fileName = `${keyword}_${Date.now()}.json`;
   fs.writeFileSync(`${OUT_DIR}/${fileName}`, json);
 }
 
