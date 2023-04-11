@@ -7,7 +7,7 @@ const isIncludes = (arr: string[], target: string) =>
 const OUT_DIR = 'images';
 
 async function main() {
-  const browser = await chromium.launch({ headless: false });
+  const browser = await chromium.launch();
 
   const page = await browser.newPage();
   const keyword = process.argv.pop();

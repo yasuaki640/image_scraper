@@ -25,7 +25,7 @@ $ npm start [keyword of images you want]
 
 - このツールは[pythonで書かれたもの](https://github.com/yasuaki640/scraping_images)の後継です。
 - 処理の流れとしては以下
-  - playwrightでブラウザを非ヘッドレスで起動。
+  - playwrightでブラウザを起動。
   - タグ検索するurlにアクセスし、ログイン要求されるまで自動スクロール。
   - サイトが非同期で送信するリクエストを`page.on`で監視し、画像urlを得る。
 - かなりアレな作りですが、サイトのDOMが変わってもある程度動いてくれるはず。
