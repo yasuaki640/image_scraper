@@ -30,11 +30,22 @@ async function main() {
 
   await browser.close();
 
-  fs.mkdirSync(OUT_DIR, { recursive: true });
+  const dirPath = `${OUT_DIR}/${keyword}`;
+  fs.mkdirSync(dirPath, { recursive: true });
 
-  const json = JSON.stringify({ data: urls });
-  const fileName = `${keyword}_${Date.now()}.json`;
-  fs.writeFileSync(`${OUT_DIR}/${fileName}`, json);
+  for (const url of urls) {
+    const res = await fetch(url);
+    if (!res.ok) {
+      console.error(`Fetching failed for image of ${url}`);
+      return;
+    }
+
+    const arrayBuffer = await res.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    const fileName = `${keyword}_${Date.now()}.jpg`;
+    fs.writeFileSync(`${dirPath}/${fileName}`, buffer);
+    console.log(`Saved image of ${fileName}`);
+  }
 }
 
 main();
