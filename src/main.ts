@@ -1,18 +1,19 @@
-import { chromium } from 'playwright';
+import { chromium, type Page } from 'playwright';
 import * as fs from 'fs';
+
+const OUT_DIR = 'images';
 
 const isIncludes = (arr: string[], target: string) =>
   arr.some((el) => target.includes(el));
 
-const OUT_DIR = 'images';
-
-async function main() {
+const openPage = async (pageUrl: string) => {
   const browser = await chromium.launch();
-
   const page = await browser.newPage();
-  const keyword = process.argv.pop();
-  await page.goto('https://www.instagram.com/explore/tags/' + keyword);
+  await page.goto(pageUrl);
+  return { browser, page };
+};
 
+const interceptImageUrls = async (page: Page) => {
   const urls: string[] = [];
   let lastRequestSend = Date.now();
   page.on('request', (r) => {
@@ -26,10 +27,10 @@ async function main() {
   do {
     await page.mouse.wheel(0, 1e99);
   } while (Date.now() - lastRequestSend <= 2000);
-  console.log(urls.length + ' image urls fetched.');
+  return urls;
+};
 
-  await browser.close();
-
+const downloadImages = async (keyword: string, urls: string[]) => {
   const dirPath = `${OUT_DIR}/${keyword}`;
   fs.mkdirSync(dirPath, { recursive: true });
 
@@ -46,6 +47,21 @@ async function main() {
     fs.writeFileSync(`${dirPath}/${fileName}`, buffer);
     console.log(`Saved image of ${fileName}`);
   }
+};
+
+async function main() {
+  const keyword = process.argv.pop();
+  const pageUrl = 'https://www.instagram.com/explore/tags/' + keyword;
+  const { browser, page } = await openPage(pageUrl);
+
+  const urls = await interceptImageUrls(page);
+  console.log(urls.length + ' image urls intercepted.');
+
+  await browser.close();
+
+  await downloadImages(keyword, urls);
+
+  console.log('Downloading images finished.');
 }
 
 main();
