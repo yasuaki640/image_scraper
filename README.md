@@ -2,8 +2,8 @@
 
 A tool for scraping images.
 
-This tool is made for downloading img by tag search from inst*gr*m.
-It's forbidden to scrape from inst*gr*m, so if you want to use this tool,
+This tool is made for downloading img by tag search from ig.
+It's forbidden to scrape from ig, so if you want to use this tool,
 I will not take any responsibility.
 
 ## Requirements
