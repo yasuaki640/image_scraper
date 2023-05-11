@@ -18,15 +18,15 @@ const interceptImageUrls = async (page: Page) => {
   let lastRequestSend = Date.now();
   page.on('request', (r) => {
     const url = r.url();
-    if (isIncludes(['.jpg', '.webp'], url)) {
+    if (isIncludes(['.jpg', '.jpeg'], url)) {
       urls.push(url);
       lastRequestSend = Date.now();
     }
   });
 
   do {
-    await page.mouse.wheel(0, 1e99);
-  } while (Date.now() - lastRequestSend <= 2000);
+    await page.mouse.wheel(0, 200);
+  } while (Date.now() - lastRequestSend <= 1000);
   return urls;
 };
 
@@ -50,8 +50,8 @@ const downloadImages = async (keyword: string, urls: string[]) => {
 };
 
 async function main() {
-  const keyword = process.argv.pop();
-  const pageUrl = 'https://www.instagram.com/explore/tags/' + keyword;
+  const keyword = process.argv.at(-2);
+  const pageUrl = process.argv.at(-1);
   const { browser, page } = await openPage(pageUrl);
 
   const urls = await interceptImageUrls(page);
